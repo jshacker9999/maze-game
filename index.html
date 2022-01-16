@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel='stylesheet' type='text/css' href='css/style.css' />
+	<meta name="keywords" content="maze, maze game, webgl game, online maze, online game" />
+	<meta name="description" content="MAZE : Find the end of the maze - WebGL GAME" />
+	<title>MAZE GAME - FIND THE END !</title>
+
+
+
+</head>
+
+<body style="margin: 0px" onLoad="main()" onkeypress="start();">
+	<canvas id="canvas" style="border: none; cursor: crosshair;" width="500" height="500"></canvas>
+
+	<div class='rules' id='rules'>
+		<h1>MAZE GAME - RULES</h1>
+		<img src='images/start.png' alt='START display' class='block3' />
+		<div class='block1'>
+			<span class='important'>Goal :</span><br />
+				You must go from the START display to the END display through the maze.
+			<hr /><br />
+			<span class='important'>Controls :</span><br />
+			<label>Left button : </label>Move forward<br />
+			<label>Right button : </label>Jump<br />
+			<hr /><br />
+
+
+			<span id='startButton' class='loadingText'>LOADING...</span>
+
+		</div>
+		<img src='images/end.png' alt='END display' class='block2' />
+	</div>
+
+	<div class='loading' id='loading'>
+		<p>LOADING LEVEL <span id='level2'></span> ...</p>
+	</div>
+
+	<div class='bar'>
+		LEVEL : <span id='level'>1</span>
+	</div>
+	<div class='bar' style='left: 200px;'>
+		TIME : <span id='timer'>0</span> s
+	</div>
+	<div class='bar' style='left: 400px;'>
+		<img src='images/hpOn.png' onclick='setSound();' id='hp' />
+	</div>
+
+	<audio id='audio' src='music/arnaud.ogg' autoplay preload loop></audio>
+	<audio id='audioEnd' src='music/end.ogg' preload></audio>
+	<audio id='audioJump' src='music/jump.ogg' preload></audio>
+	<audio id='audioJump2' src='music/jump2.ogg' preload></audio>
+	<audio id='audioReverse' src='music/chuckNorris.ogg' preload></audio>
+
+
+	<div class='win' id='win'>
+		<h1>You win ! Congratulations !</h1>Your time : <span id='score'></span><br /><br /><img src='images/win.jpg' />
+	</div>
+
+
+	<script type="text/javascript" src="js/lib_sylvester.js"></script>
+	<script type="text/javascript" src="js/lib_glUtils.js"></script>
+
+	<script id="shader-fs" type="x-shader/x-fragment">
+
+    precision highp float ;
+    
+    
+    varying float vLightWeighting;
+    varying vec2 vTextureCoord ;
+    uniform sampler2D uSampler ;
+   
+    void main(void) {
+     gl_FragColor = vLightWeighting*texture2D(uSampler, vTextureCoord) ;
+	gl_FragColor[3]=1.0;    
+    }
+</script>
+
+	<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexNormal, aVertexPosition ;
+    attribute vec2 aTextureCoord ;
+
+    uniform mat4 uMVMatrix ;
+    uniform mat4 uPMatrix ;
+    uniform int render;
+    
+    varying vec2 vTextureCoord ;
+   varying float vLightWeighting;
+
+    void main(void) {
+	gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0) ;
+        vTextureCoord = aTextureCoord ; 
+	if(render==1 && aVertexNormal[0]!=2.0 ) {
+		vLightWeighting=(1.0-smoothstep(2.0,20.0,length(gl_Position))*0.85);
+		return;
+	} else {	vLightWeighting=1.0;
+		return;
+	}
+    }
+</script>
+	<script src="js/script.js"></script>
+	<script type='text/javascript'> pub(false); </script>
+</body>
+
+</html>
